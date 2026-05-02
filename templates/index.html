@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dual Disease Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .page-title {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .page-title h1 { font-size: 2rem; font-weight: 600; color: #1a202c; }
+    .page-title p  { color: #718096; margin-top: 0.4rem; font-size: 0.95rem; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto 2rem;
+    }
+
+    @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .card-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .icon-diabetes { background: #ebf8ff; }
+    .icon-ckd      { background: #f0fff4; }
+
+    .card-header h2 { font-size: 1.1rem; font-weight: 600; }
+    .card-header p  { font-size: 0.78rem; color: #718096; margin-top: 1px; }
+
+    .badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: #ebf8ff;
+      color: #2b6cb0;
+    }
+    .badge-ckd { background: #f0fff4; color: #276749; }
+
+    .field { margin-bottom: 1rem; }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 4px;
+    }
+    .field label span {
+      font-weight: 400;
+      color: #a0aec0;
+      font-size: 0.75rem;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: #1a202c;
+      background: #fff;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: #4299e1;
+    }
+
+    .hint {
+      font-size: 0.72rem;
+      color: #a0aec0;
+      margin-top: 3px;
+    }
+
+    .submit-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .submit-btn {
+      background: #3182ce;
+      color: #fff;
+      border: none;
+      padding: 14px 48px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .submit-btn:hover  { background: #2b6cb0; }
+    .submit-btn:active { transform: scale(0.98); }
+
+    .disclaimer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: #a0aec0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-title">
+    <h1>🏥 Dual Disease Early Risk Screener</h1>
+    <p>Enter basic health information to screen for Diabetes and Chronic Kidney Disease risk</p>
+  </div>
+
+  <form action="/predict" method="POST">
+    <div class="cards">
+
+      <!-- ── DIABETES CARD ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon icon-diabetes">🩸</div>
+          <div>
+            <h2>Diabetes Risk</h2>
+            <p>5 basic inputs needed</p>
+          </div>
+          <span class="badge">Diabetes</span>
+        </div>
+
+        <div class="field">
+          <label>Glucose Level <span>(mg/dL)</span></label>
+          <input type="number" name="glucose" min="0" max="300" step="0.1" placeholder="e.g. 120" required />
+          <div class="hint">Fasting blood sugar — normal is 70–100 mg/dL</div>
+        </div>
+
+        <div class="field">
+          <label>BMI <span>(kg/m²)</span></label>
+          <input type="number" name="bmi" min="0" max="70" step="0.1" placeholder="e.g. 26.5" required />
+          <div class="hint">Body Mass Index — normal is 18.5–24.9</div>
+        </div>
+
+        <div class="field">
+          <label>Age <span>(years)</span></label>
+          <input type="number" name="age" min="1" max="120" placeholder="e.g. 35" required />
+        </div>
+
+        <div class="field">
+          <label>Diabetes Pedigree Function</label>
+          <input type="number" name="pedigree" min="0" max="3" step="0.001" placeholder="e.g. 0.5" required />
+          <div class="hint">Family history score — 0 (none) to 2.5 (strong history)</div>
+        </div>
+
+        <div class="field">
+          <label>Pregnancies <span>(count)</span></label>
+          <input type="number" name="pregnancies" min="0" max="20" placeholder="e.g. 2" required />
+          <div class="hint">Enter 0 if male or never pregnant</div>
+        </div>
+      </div>
+
+      <!-- ── CKD CARD ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon icon-ckd">🫘</div>
+          <div>
+            <h2>Kidney Disease Risk</h2>
+            <p>8 basic inputs needed</p>
+          </div>
+          <span class="badge badge-ckd">CKD</span>
+        </div>
+
+        <div class="field">
+          <label>Age <span>(years)</span></label>
+          <input type="number" name="ckd_age" min="1" max="120" placeholder="e.g. 45" required />
+        </div>
+
+        <div class="field">
+          <label>Blood Pressure <span>(mm Hg)</span></label>
+          <input type="number" name="bp" min="0" max="200" placeholder="e.g. 80" required />
+          <div class="hint">Diastolic BP — normal is 60–80 mm Hg</div>
+        </div>
+
+        <div class="field">
+          <label>Albumin <span>(0–5 scale)</span></label>
+          <input type="number" name="al" min="0" max="5" step="1" placeholder="e.g. 1" required />
+          <div class="hint">Urine albumin level — 0 is normal, 5 is very high</div>
+        </div>
+
+        <div class="field">
+          <label>Hemoglobin <span>(g/dL)</span></label>
+          <input type="number" name="hemo" min="0" max="20" step="0.1" placeholder="e.g. 13.5" required />
+          <div class="hint">Normal: 12–17 g/dL. Low = possible anemia</div>
+        </div>
+
+        <div class="field">
+          <label>Serum Creatinine <span>(mg/dL)</span></label>
+          <input type="number" name="sc" min="0" max="30" step="0.1" placeholder="e.g. 1.2" required />
+          <div class="hint">Normal: 0.6–1.2 mg/dL. High = kidney stress</div>
+        </div>
+
+        <div class="field">
+          <label>Hypertension</label>
+          <select name="htn" required>
+            <option value="">-- Select --</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Diabetes Mellitus</label>
+          <select name="dm" required>
+            <option value="">-- Select --</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Appetite</label>
+          <select name="appet" required>
+            <option value="">-- Select --</option>
+            <option value="good">Good</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+      </div>
+
+    </div><!-- /cards -->
+
+    <div class="submit-wrap">
+      <button type="submit" class="submit-btn">🔍 Predict Risk</button>
+      <p class="disclaimer">⚠️ This tool is for early screening only — not a medical diagnosis. Always consult a doctor.</p>
+    </div>
+  </form>
+
+</body>
+</html>
