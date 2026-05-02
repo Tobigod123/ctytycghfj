@@ -22,7 +22,6 @@ COPY train_ckd.py .
 COPY train_diabetes.py .
 COPY datasets/ ./datasets/
 COPY templates/ ./templates/
-COPY static/ ./static/
 
 # Create models directory
 RUN mkdir -p models
