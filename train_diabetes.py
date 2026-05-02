@@ -9,7 +9,9 @@ from tensorflow.keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
 import joblib
 import os
-
+import matplotlib
+matplotlib.use('Agg')  # Non-interactive backend for Docker
+import matplotlib.pyplot as plt
 # ─────────────────────────────────────────
 # 1. LOAD DATASET
 # ─────────────────────────────────────────
